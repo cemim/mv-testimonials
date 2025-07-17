@@ -48,6 +48,8 @@ if( !class_exists( 'MV_Testimonials' ) ){
             require_once( MV_TESTIMONIALS_PATH . 'widgets/class.mv-testimonials-widget.php' );
             $MVTestimonialsWidgets = new MV_Testimonials_Widget();
 
+            add_filter('archive_template', array($this, 'load_custom_archive_template'));
+            add_filter('single_template', array($this, 'load_custom_single_template'));
         }
 
          /**
@@ -57,7 +59,52 @@ if( !class_exists( 'MV_Testimonials' ) ){
             // Path/URL to root of this plugin, with trailing slash.
             define ( 'MV_TESTIMONIALS_PATH', plugin_dir_path( __FILE__ ) );
             define ( 'MV_TESTIMONIALS_URL', plugin_dir_url( __FILE__ ) );
-            define ( 'MV_TESTIMONIALS_VERSION', '1.0.0' );     
+            define ( 'MV_TESTIMONIALS_VERSION', '1.0.0' );            
+            define ('MV_TESTIMONIALS_OVERRIDE_PATH_DIR', get_stylesheet_directory() . '/mv-testimonials/' );
+        }
+
+        public function load_custom_archive_template($tpl)
+        {            
+            /**
+             * Para exibir template personalizado o tema precisa dar suporte ao meu plugin
+             * Para ativar o suporte no arquivo functions do tema adicionar:
+             * add_theme_support('mv-testimonials');
+             */
+            if (current_theme_supports('mv-testimonials')) {
+                if(is_post_type_archive('mv-testimonials')){
+                    $tpl = $this->get_template_part_location('archive-mv-testimonials.php');
+                }                
+            }
+            
+            return $tpl;
+        }
+
+        public function load_custom_single_template($tpl)
+        {            
+            /**
+             * Para exibir template personalizado o tema precisa dar suporte ao meu plugin
+             * Para ativar o suporte no arquivo functions do tema adicionar:
+             * add_theme_support('mv-testimonials');
+             */
+            if (current_theme_supports('mv-testimonials')) {
+                if(is_singular('mv-testimonials')){
+                    $tpl = $this->get_template_part_location('single-mv-testimonials.php');;
+                }                
+            }
+            
+            return $tpl;
+        }
+
+        // Permite que o tema reescreva os arquivos de template
+        public function get_template_part_location($file)
+        {
+            if(file_exists(MV_TESTIMONIALS_OVERRIDE_PATH_DIR . $file)){
+                $file = MV_TESTIMONIALS_OVERRIDE_PATH_DIR . $file;
+            } else {
+                $file = MV_TESTIMONIALS_PATH . 'views/templates/' . $file;
+            }
+
+            return $file;
         }
 
         /**

@@ -48,3 +48,7 @@
         wp_reset_postdata();
     endif;
 ?>
+
+<a href="<?= get_post_type_archive_link('mv-testimonials') ?>">
+    <?= esc_html_e('Show More Testimonials', 'mv-testimonials') ?>
+</a>
