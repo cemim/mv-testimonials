@@ -40,7 +40,9 @@ if( !class_exists( 'MV_Testimonials' ) ){
         public function __construct() {
 
             // Define constants used througout the plugin
-            $this->define_constants(); 
+            $this->define_constants();
+
+            $this->load_textdomain();
             
             require_once( MV_TESTIMONIALS_PATH . 'post-types/class.mv-testimonials-cpt.php' );
             $MVTestimonialsPostType = new MV_Testimonials_Post_Type();
@@ -62,6 +64,15 @@ if( !class_exists( 'MV_Testimonials' ) ){
             define ( 'MV_TESTIMONIALS_VERSION', '1.0.0' );            
             define ('MV_TESTIMONIALS_OVERRIDE_PATH_DIR', get_stylesheet_directory() . '/mv-testimonials/' );
         }
+
+        public function load_textdomain()
+        {
+            load_plugin_textdomain(
+                'mv-testimonials',
+                false,
+                dirname(plugin_basename(__FILE__)) .'/languages/'
+            );
+        }        
 
         public function load_custom_archive_template($tpl)
         {            
@@ -125,8 +136,19 @@ if( !class_exists( 'MV_Testimonials' ) ){
         /**
          * Uninstall the plugin
          */
-        public static function uninstall(){
+        public static function uninstall()
+        {
+            delete_option('widget_mv-testimonials');
+            
+            $posts = get_posts(array(
+                'post_type'=> 'mv-testimonials',
+                'number_posts'=> -1,
+                'post_status'=> 'any',
+            ));
 
+            foreach ($posts as $post) {
+                wp_delete_post($post->ID, true);
+            }
         }
 
     }
