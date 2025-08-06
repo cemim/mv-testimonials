@@ -5,7 +5,7 @@ class MV_Testimonials_Widget extends WP_Widget
     public function __construct()
     {
         $widget_options = array(
-            'description' => __('Your most beloved testimonials', 'mv-testimonials')
+            'description' => 'Your most beloved testimonials'
         );
 
         parent::__construct(
